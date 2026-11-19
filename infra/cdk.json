@@ -1,0 +1,28 @@
+{
+  "app": "python app.py",
+  "context": {
+    "project": "enp",
+    "github": {
+      "owner": "thelsandroantunes",
+      "repo": "enp-web"
+    },
+    "envs": {
+      "dev": {
+        "account": "000000000000",
+        "region": "sa-east-1",
+        "alertEmail": "voce@exemplo.com",
+        "monthlyBudgetUsd": 50,
+        "domain": null,
+        "dbMaxAcu": 2
+      },
+      "prod": {
+        "account": "111111111111",
+        "region": "sa-east-1",
+        "alertEmail": "voce@exemplo.com",
+        "monthlyBudgetUsd": 200,
+        "domain": "enp.com.br",
+        "dbMaxAcu": 8
+      }
+    }
+  }
+}

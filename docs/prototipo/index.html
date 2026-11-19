@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ENP — Protótipo do app de questões ENEM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f5f7; --card:#fff; --ink:#14161a; --muted:#646b76; --line:#e4e7ec;
+  --pri:#2f5bea; --pri-soft:#e8eefe; --good:#1f9d63; --good-soft:#e5f6ee;
+  --warn:#c98a06; --warn-soft:#fdf3dc; --bad:#d1453b; --bad-soft:#fde9e7;
+  --top:#7a3fe0; --top-soft:#f0e8fd;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#e9ebef;color:var(--ink);font-size:14px;line-height:1.4}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+.layout{display:flex;gap:32px;justify-content:center;align-items:flex-start;padding:28px 20px;min-height:100%}
+.side{max-width:340px;padding-top:12px}
+.side h1{font-size:20px;margin:0 0 6px}
+.side p,.side li{color:var(--muted);font-size:13.5px}
+.side ol{padding-left:18px;margin:8px 0}
+.side .tag{display:inline-block;font-size:11px;font-weight:600;background:var(--warn-soft);color:#8a5d00;padding:3px 8px;border-radius:99px;margin-bottom:10px}
+.side .box{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:14px}
+.side .box b{color:var(--ink)}
+.phone{width:390px;height:800px;background:var(--bg);border-radius:36px;border:10px solid #111;position:relative;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.18);display:flex;flex-direction:column;flex-shrink:0}
+@media (max-width:820px){.side{display:none}.layout{padding:0}.phone{width:100%;height:100vh;border:0;border-radius:0;box-shadow:none}}
+.top{padding:16px 18px 10px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.brand{font-weight:800;font-size:17px;letter-spacing:-.2px}
+.brand span{color:var(--pri)}
+.plan-pill{font-size:11px;font-weight:700;padding:4px 9px;border-radius:99px;background:var(--pri-soft);color:var(--pri)}
+.plan-pill.top{background:var(--top-soft);color:var(--top)}
+.screen{flex:1;overflow-y:auto;padding:16px 16px 90px}
+.nav{position:absolute;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding:6px 4px 10px}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:10.5px;color:var(--muted);padding:6px 0;border-radius:10px}
+.nav button.on{color:var(--pri);font-weight:600}
+.nav svg{width:22px;height:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.h{font-size:18px;font-weight:700;margin:2px 0 4px;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:12.5px}
+.k{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+.btn{display:block;width:100%;padding:13px;border-radius:12px;background:var(--pri);color:#fff;font-weight:600;text-align:center}
+.btn.ghost{background:var(--pri-soft);color:var(--pri)}
+.btn.small{display:inline-block;width:auto;padding:8px 12px;font-size:12.5px;border-radius:10px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;align-items:center;gap:10px}
+.between{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:500;font-size:13px}
+.chip.on{border-color:var(--pri);background:var(--pri-soft);color:var(--pri);font-weight:600}
+.chip .t{font-size:10px;font-weight:700;color:var(--top);margin-left:4px}
+.opt{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#fff;width:100%;text-align:left}
+.opt.on{border-color:var(--pri);background:var(--pri-soft)}
+.opt small{color:var(--muted)}
+.ring{position:relative;width:132px;height:132px;flex-shrink:0}
+.ring svg{transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring .p{font-size:30px;font-weight:800;letter-spacing:-1px}
+.ring .l{font-size:11px;color:var(--muted)}
+.bar{height:8px;background:#eef0f3;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:var(--pri)}
+.area{display:grid;grid-template-columns:86px 1fr 96px;align-items:center;gap:8px;margin:7px 0;font-size:12.5px}
+.area b{font-weight:600}
+.area .v{text-align:right;font-variant-numeric:tabular-nums}
+.area .v small{color:var(--muted);display:block;font-size:10.5px}
+.badge{font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:99px;display:inline-block}
+.b-good{background:var(--good-soft);color:var(--good)}
+.b-warn{background:var(--warn-soft);color:#8a5d00}
+.b-bad{background:var(--bad-soft);color:var(--bad)}
+.b-pri{background:var(--pri-soft);color:var(--pri)}
+.b-top{background:var(--top-soft);color:var(--top)}
+.tip{background:var(--pri-soft);border-radius:14px;padding:12px 14px;margin-bottom:12px;font-size:13px}
+.tip b{color:var(--pri)}
+.q-stem{font-size:15px;line-height:1.5;margin:8px 0 12px}
+.alt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;padding:11px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#fff;font-size:13.5px}
+.alt .L{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.alt.sel{border-color:var(--pri);background:var(--pri-soft)}
+.alt.ok{border-color:var(--good);background:var(--good-soft)}
+.alt.ok .L{background:var(--good);color:#fff;border-color:var(--good)}
+.alt.no{border-color:var(--bad);background:var(--bad-soft)}
+.alt.no .L{background:var(--bad);color:#fff;border-color:var(--bad)}
+.expl{font-size:13px;background:#f7f8fa;border-radius:12px;padding:12px;margin:6px 0 12px}
+.delta{font-weight:700}
+.delta.up{color:var(--good)} .delta.down{color:var(--bad)}
+.lock{position:relative}
+.lock .blur{filter:blur(6px);user-select:none}
+.lock .cta{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.plan{border:1.5px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px;background:#fff}
+.plan.cur{border-color:var(--pri)}
+.plan.rec{border-color:var(--top)}
+.plan .price{font-size:22px;font-weight:800;letter-spacing:-.5px}
+.plan .price small{font-size:12px;font-weight:500;color:var(--muted)}
+.plan ul{margin:8px 0 10px;padding-left:18px;color:#343a44;font-size:12.5px}
+.plan li{margin:3px 0}
+.toggle{display:flex;background:#eceef2;border-radius:12px;padding:3px;margin-bottom:12px}
+.toggle button{flex:1;padding:8px;border-radius:10px;font-weight:600;font-size:12.5px;color:var(--muted)}
+.toggle button.on{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.note{font-size:11px;color:var(--muted);margin-top:8px}
+input[type=range]{width:100%;accent-color:var(--pri)}
+.timer{font-variant-numeric:tabular-nums;font-weight:700;color:var(--pri)}
+.progress{display:flex;gap:4px;margin:8px 0}
+.progress i{flex:1;height:4px;border-radius:9px;background:#e4e7ec}
+.progress i.d{background:var(--pri)}
+.modal{position:absolute;inset:0;background:rgba(10,12,16,.45);display:flex;align-items:flex-end;z-index:5}
+.sheet{background:#fff;width:100%;border-radius:22px 22px 0 0;padding:18px 16px 22px;max-height:85%;overflow:auto}
+.ob{padding:22px 18px}
+.ob .step{font-size:12px;color:var(--muted);font-weight:600}
+.spark{display:flex;align-items:flex-end;gap:3px;height:38px}
+.spark i{flex:1;background:var(--pri);opacity:.75;border-radius:3px 3px 0 0;min-height:2px}
+.sel-native{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);font:inherit;background:#fff}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <span class="tag">Protótipo navegável · dados ilustrativos</span>
+    <h1>ENP — app de questões ENEM</h1>
+    <p>Protótipo para decidir se criamos o projeto. O cálculo de chance é real (TRI 3 parâmetros + nota de corte); questões, cortes e pesos são de exemplo.</p>
+    <div class="box">
+      <b>O que testar</b>
+      <ol>
+        <li>Escolha curso, universidades e modalidade no início.</li>
+        <li>Responda questões e veja a chance mudar após cada uma.</li>
+        <li>Faça o simulado rápido (8 questões).</li>
+        <li>Em <b>Chances</b>, use “Simular aluno” para ver a estimativa convergir com muitas questões.</li>
+        <li>Em <b>Planos</b>, troque de plano e veja o que cada degrau libera.</li>
+      </ol>
+    </div>
+    <div class="box">
+      <b>Como a chance é calculada</b>
+      <p style="margin:6px 0 0">Nota por área estimada por TRI (EAP) com erro padrão → média ponderada pelos pesos do curso → P = Φ((nota − corte) / √(σ²nota + σ²corte)). Com poucas respostas a incerteza é alta e a chance fica perto do meio; ela fica mais firme conforme o aluno pratica.</p>
+    </div>
+    <p class="note">Não usa armazenamento: recarregar a página reinicia o protótipo.</p>
+  </aside>
+
+  <div class="phone" id="phone">
+    <div class="top" id="topbar" style="display:none">
+      <div class="brand">EN<span>P</span></div>
+      <button class="plan-pill" id="planPill" onclick="go('planos')"></button>
+    </div>
+    <div class="screen" id="screen"></div>
+    <nav class="nav" id="nav" style="display:none"></nav>
+    <div id="modalRoot"></div>
+  </div>
+</div>
+
+<script>
+/* ===================== DADOS (ilustrativos) ===================== */
+const AREAS = [
+  {id:'LC', nome:'Linguagens'},
+  {id:'CH', nome:'Humanas'},
+  {id:'CN', nome:'Natureza'},
+  {id:'MT', nome:'Matemática'}
+];
+// pesos ilustrativos (LC, CH, CN, MT, RED)
+const CURSOS = [
+  {id:'med', nome:'Medicina', top:true, pesos:{LC:1,CH:1,CN:3,MT:2,RED:2},
+   faixa:'Sisu 2026 real: 779,72 a 865,30 (ampla)',
+   ops:[['Unilab — Redenção (CE)',865.30,true],['UFMG — Belo Horizonte',818],['UFRJ — Rio de Janeiro',815],['UFPE — Recife',812],['UFBA — Salvador',808],['UFPA — Belém',790]]},
+  {id:'dir', nome:'Direito', top:true, pesos:{LC:3,CH:3,CN:1,MT:1,RED:3},
+   faixa:'Sisu 2026 real: 689,66 a 802,97 (ampla)',
+   ops:[['UFMS — Campo Grande',802.97,true],['UFPR — Curitiba',770],['UFPE — Recife',765],['UnB — Brasília',760],['UFBA — Salvador',745],['UFNT — Araguaína',689.66,true]]},
+  {id:'cc', nome:'Ciência da Computação', top:true, pesos:{LC:1,CH:1,CN:2,MT:4,RED:1},
+   faixa:'Sisu 2026 real: 645,60 a 817,04 (ampla)',
+   ops:[['UFPE — Recife',817.04,true],['UFMG — Belo Horizonte',790],['UFRJ — Rio de Janeiro',780],['UFSC — Florianópolis',760],['UFC — Fortaleza',750],['UFPB — João Pessoa',645.60,true]]},
+  {id:'eng', nome:'Engenharia Civil', top:true, pesos:{LC:1,CH:1,CN:3,MT:4,RED:1},
+   ops:[['UFMG — Belo Horizonte',765],['UFRJ — Rio de Janeiro',760],['UFPR — Curitiba',745],['UFC — Fortaleza',735],['UFPA — Belém',700]]},
+  {id:'enf', nome:'Enfermagem', pesos:{LC:1,CH:1,CN:2,MT:1,RED:1},
+   ops:[['UFMG — Belo Horizonte',740],['UFRJ — Rio de Janeiro',735],['UFBA — Salvador',715],['UFPA — Belém',690],['UFPI — Teresina',680]]},
+  {id:'psi', nome:'Psicologia', pesos:{LC:2,CH:2,CN:2,MT:1,RED:2},
+   ops:[['UFMG — Belo Horizonte',760],['UFRJ — Rio de Janeiro',755],['UFC — Fortaleza',735],['UFPB — João Pessoa',720]]},
+  {id:'adm', nome:'Administração', pesos:{LC:2,CH:2,CN:1,MT:2,RED:1},
+   ops:[['UFMG — Belo Horizonte',750],['UFRJ — Rio de Janeiro',745],['UFPE — Recife',725],['UFBA — Salvador',710],['UFPA — Belém',680]]},
+  {id:'ped', nome:'Pedagogia', pesos:{LC:2,CH:2,CN:1,MT:1,RED:2},
+   ops:[['UFMG — Belo Horizonte',690],['UFRJ — Rio de Janeiro',680],['UFC — Fortaleza',665],['UFPA — Belém',640]]}
+];
+const MODALIDADES = [
+  {id:'ampla', nome:'Ampla concorrência', fator:1},
+  {id:'ep', nome:'Escola pública', fator:0.955},
+  {id:'epr', nome:'Escola pública + baixa renda', fator:0.93}
+];
+const SIGMA_CORTE = 18;
+
+/* Questões originais de exemplo (estilo ENEM). a=discriminação, b=dificuldade, c=acerto casual */
+const QS = [
+ {id:1,area:'LC',a:1.4,b:-0.8,c:.2,stem:'Em uma campanha publicitária, a frase “Economize hoje, sorria amanhã” utiliza predominantemente a função da linguagem:',alts:['referencial','conativa (apelativa)','metalinguística','fática','poética'],ok:1,exp:'O verbo no imperativo (“economize”, “sorria”) busca convencer o leitor: função conativa.'},
+ {id:2,area:'LC',a:1.6,b:0.2,c:.2,stem:'Em “O silêncio gritava na sala vazia”, a figura de linguagem predominante é a:',alts:['metonímia','eufemismo','personificação (prosopopeia)','hipérbato','pleonasmo'],ok:2,exp:'Atribui-se uma ação humana (gritar) a algo inanimado (o silêncio): personificação.'},
+ {id:3,area:'LC',a:1.2,b:-1.2,c:.2,stem:'Um texto que apresenta tese, argumentos e proposta de intervenção pertence ao tipo:',alts:['narrativo','descritivo','dissertativo-argumentativo','injuntivo','expositivo'],ok:2,exp:'Tese + argumentos + proposta de intervenção é a estrutura da redação dissertativo-argumentativa do ENEM.'},
+ {id:4,area:'LC',a:1.8,b:0.9,c:.2,stem:'Em “Embora chovesse, o jogo continuou”, a conjunção destacada estabelece relação de:',alts:['causa','concessão','condição','finalidade','conclusão'],ok:1,exp:'“Embora” introduz um fato contrário que não impede o outro: concessão.'},
+ {id:5,area:'CH',a:1.3,b:-1.3,c:.2,stem:'A Lei Áurea, assinada em 1888, está diretamente associada a qual processo histórico brasileiro?',alts:['Independência','Abolição da escravidão','Proclamação da República','Era Vargas','Inconfidência Mineira'],ok:1,exp:'A Lei Áurea extinguiu formalmente a escravidão no Brasil em 13 de maio de 1888.'},
+ {id:6,area:'CH',a:1.5,b:0.0,c:.2,stem:'O conceito de Estado de bem-estar social está associado principalmente:',alts:['à ausência de intervenção estatal na economia','à garantia, pelo Estado, de direitos como saúde, educação e previdência','à economia planificada sem propriedade privada','ao poder absoluto do monarca','à organização feudal da produção'],ok:1,exp:'O Estado de bem-estar social amplia políticas públicas e direitos sociais garantidos pelo Estado.'},
+ {id:7,area:'CH',a:1.4,b:0.4,c:.2,stem:'A urbanização brasileira na segunda metade do século XX foi marcada principalmente por:',alts:['êxodo rural acelerado e crescimento de periferias','planejamento urbano que evitou desigualdades','redução da população das capitais','migração das cidades para o campo','estagnação industrial'],ok:0,exp:'A industrialização atraiu migrantes do campo, e as cidades cresceram rápido, com periferias sem infraestrutura.'},
+ {id:8,area:'CH',a:1.7,b:1.1,c:.2,stem:'Para Max Weber, a dominação baseada em regras impessoais e hierarquia de cargos é chamada:',alts:['carismática','tradicional','racional-legal','patrimonialista','teocrática'],ok:2,exp:'A dominação racional-legal se apoia em normas impessoais, típica da burocracia moderna.'},
+ {id:9,area:'CN',a:1.3,b:-1.0,c:.2,stem:'Um carro percorre 120 km em 1,5 h. Sua velocidade média é:',alts:['60 km/h','80 km/h','90 km/h','100 km/h','180 km/h'],ok:1,exp:'v = Δs/Δt = 120 / 1,5 = 80 km/h.'},
+ {id:10,area:'CN',a:1.4,b:-0.5,c:.2,stem:'A principal função das mitocôndrias na célula é:',alts:['síntese de proteínas','respiração celular e produção de ATP','fotossíntese','armazenamento do DNA nuclear','digestão intracelular'],ok:1,exp:'Na mitocôndria ocorre a respiração celular aeróbica, que produz a maior parte do ATP.'},
+ {id:11,area:'CN',a:1.6,b:0.5,c:.2,stem:'Ao diluir 100 mL de uma solução 2 mol/L até 400 mL, a nova concentração é:',alts:['0,25 mol/L','0,5 mol/L','1 mol/L','4 mol/L','8 mol/L'],ok:1,exp:'C₁V₁ = C₂V₂ → 2 × 100 = C₂ × 400 → C₂ = 0,5 mol/L.'},
+ {id:12,area:'CN',a:1.9,b:1.3,c:.2,stem:'Numa população em equilíbrio de Hardy-Weinberg, a frequência do alelo recessivo é 0,3. A frequência de heterozigotos é:',alts:['0,09','0,21','0,42','0,49','0,70'],ok:2,exp:'p = 0,7 e q = 0,3; heterozigotos = 2pq = 2 × 0,7 × 0,3 = 0,42.'},
+ {id:13,area:'MT',a:1.3,b:-1.1,c:.2,stem:'Um produto de R$ 80,00 recebe desconto de 15%. O preço final é:',alts:['R$ 65,00','R$ 68,00','R$ 70,00','R$ 72,00','R$ 75,00'],ok:1,exp:'15% de 80 = 12; 80 − 12 = R$ 68,00.'},
+ {id:14,area:'MT',a:1.5,b:-0.4,c:.2,stem:'A média aritmética de 6, 8, 10 e x é 9. O valor de x é:',alts:['9','10','11','12','14'],ok:3,exp:'Soma = 4 × 9 = 36; 6 + 8 + 10 = 24; x = 12.'},
+ {id:15,area:'MT',a:1.7,b:0.6,c:.2,stem:'Uma caixa tem 3 bolas vermelhas e 5 azuis. Retirando 2 sem reposição, a probabilidade de ambas serem azuis é:',alts:['5/14','25/64','5/8','1/4','3/14'],ok:0,exp:'(5/8) × (4/7) = 20/56 = 5/14.'},
+ {id:16,area:'MT',a:1.8,b:1.0,c:.2,stem:'Se f(x) = 2ˣ e f(a) = 32, então f(a − 2) vale:',alts:['4','8','16','30','64'],ok:1,exp:'2ᵃ = 32 → a = 5; f(3) = 2³ = 8.'}
+];
+
+const PLANOS = [
+  {id:'free', nome:'Grátis', m:0, a:0, ops:1, para:'Todos, porta de entrada',
+   itens:['20 questões por dia','1 objetivo (curso + universidade)','Chance em faixa: baixa, média ou alta','1 simulado rápido por mês']},
+  {id:'ess', nome:'Essencial', m:9.90, a:89, ops:2, para:'Baixa renda, volume',
+   itens:['Questões ilimitadas','Chance em % com margem','2 opções de curso/universidade','2 simulados TRI por mês'], social:'Essencial Social: R$ 4,90/mês para escola pública (via parceria)'},
+  {id:'plus', nome:'Plus', m:19.90, a:179, ops:5, para:'A maioria dos cursos',
+   itens:['Tudo do Essencial','5 opções monitoradas','Simulados ilimitados','Plano de estudos adaptativo','4 redações corrigidas por IA/mês']},
+  {id:'pro', nome:'Pro', m:34.90, a:299, ops:5, para:'Cursos concorridos',
+   itens:['Tudo do Plus','Chance por modalidade de cota','Ranking entre concorrentes do mesmo curso','12 redações por IA/mês']},
+  {id:'top', nome:'Top', m:59.90, a:499, ops:5, para:'Medicina, Direito, Computação, Engenharias',
+   itens:['Tudo do Pro','Trilha de alta concorrência','Questões de alta dificuldade','Redação ilimitada','Mentoria com IA']}
+];
+const RANK = {free:0,ess:1,plus:2,pro:3,top:4};
+
+/* ===================== ESTADO ===================== */
+const S = {
+  onb:0, curso:null, ops:[], mod:'ampla', plano:'free', ciclo:'m',
+  resp:{LC:[],CH:[],CN:[],MT:[]}, // {a,b,c,u}
+  red:600, redSe:80, prior:550,
+  hist:[], // chance da 1ª opção após cada resposta
+  respondidas:new Set(), qAtual:null, qSel:null, qFeito:false, ultimoDelta:null,
+  sim:null, simUsados:0, tela:'inicio', streak:3, hoje:0
+};
+
+/* ===================== MOTOR TRI + CHANCE ===================== */
+const GRID = []; for(let t=-4;t<=4.0001;t+=0.05) GRID.push(+t.toFixed(2));
+const D = 1.0;
+function p3(theta,a,b,c){ return c + (1-c)/(1+Math.exp(-D*a*(theta-b))); }
+function eap(lista){
+  let num=0, den=0, num2=0; const mu=(S.prior-500)/100;
+  for(const t of GRID){
+    let w = Math.exp(-(t-mu)*(t-mu)/2);
+    for(const r of lista){ const p=p3(t,r.a,r.b,r.c); w *= r.u ? p : (1-p); }
+    num+=t*w; num2+=t*t*w; den+=w;
+  }
+  const m=num/den, v=Math.max(num2/den-m*m,1e-6);
+  return {m, sd:Math.sqrt(v)};
+}
+function notaArea(id){ const e=eap(S.resp[id]); return {nota:500+100*e.m, se:100*e.sd, n:S.resp[id].length}; }
+function erf(x){ const s=Math.sign(x); x=Math.abs(x); const t=1/(1+0.3275911*x);
+  const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x); return s*y; }
+function Phi(z){ return 0.5*(1+erf(z/Math.SQRT2)); }
+function cursoObj(){ return CURSOS.find(c=>c.id===S.curso); }
+function notas(){ const o={}; AREAS.forEach(a=>o[a.id]=notaArea(a.id)); o.RED={nota:S.red,se:S.redSe,n:0}; return o; }
+function notaCurso(ns, c){
+  const p=c.pesos; let W=0,N=0,V=0;
+  for(const k of ['LC','CH','CN','MT','RED']){ W+=p[k]; }
+  for(const k of ['LC','CH','CN','MT','RED']){ const w=p[k]/W; N+=w*ns[k].nota; V+=w*w*ns[k].se*ns[k].se; }
+  return {nota:N, se:Math.sqrt(V)};
+}
+function corte(op){ const f=MODALIDADES.find(m=>m.id===S.mod).fator; return op[1]*(RANK[S.plano]>=3?f:1); }
+function chance(op, ns){
+  const c=cursoObj(); ns=ns||notas(); const nc=notaCurso(ns,c); const C=corte(op);
+  const z=(nc.nota-C)/Math.sqrt(nc.se*nc.se+SIGMA_CORTE*SIGMA_CORTE);
+  return {p:Phi(z), nota:nc.nota, se:nc.se, corte:C, falta:C-nc.nota};
+}
+function melhorArea(op){
+  const base=chance(op).p; let best=null;
+  for(const k of ['LC','CH','CN','MT','RED']){
+    const ns=notas(); ns[k]={...ns[k], nota:ns[k].nota+20};
+    const g=chance(op,ns).p-base;
+    if(!best||g>best.g) best={k,g};
+  }
+  if(best.g<0.005){ const p=cursoObj().pesos; const k=['CN','MT','LC','CH','RED'].reduce((x,y)=>p[y]>p[x]?y:x); best={k,g:best.g}; }
+  return best;
+}
+function nomeArea(k){ return k==='RED'?'Redação':AREAS.find(a=>a.id===k).nome; }
+function faixa(p){ return p<0.25?['baixa','b-bad']:p<0.6?['média','b-warn']:['alta','b-good']; }
+function precisao(){ const n=Object.values(S.resp).reduce((s,l)=>s+l.length,0); return n<12?['baixa','b-bad']:n<60?['média','b-warn']:['alta','b-good']; }
+const pct = p => Math.round(p*100)+'%';
+const ppf = d => (Math.abs(d)<0.0005?'±':d>0?'+':'−')+Math.abs(d*100).toFixed(1).replace('.',',')+' pp';
+const brl = v => v===0?'R$ 0':'R$ '+v.toFixed(2).replace('.',',');
+
+/* ===================== UI BASE ===================== */
+const $ = s => document.querySelector(s);
+const ICON = {
+ inicio:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+ questoes:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',
+ simulado:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>',
+ chances:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+ planos:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 6 .9-4.5 4.3 1 6.3L12 16.6 6.5 19.5l1-6.3L3 8.9 9 8z"/></svg>'
+};
+function renderNav(){
+  const t=[['inicio','Início'],['questoes','Questões'],['simulado','Simulado'],['chances','Chances'],['planos','Planos']];
+  $('#nav').innerHTML=t.map(([k,l])=>`<button class="${S.tela===k?'on':''}" onclick="go('${k}')">${ICON[k]}${l}</button>`).join('');
+  const pl=PLANOS.find(p=>p.id===S.plano);
+  $('#planPill').textContent='Plano '+pl.nome; $('#planPill').className='plan-pill'+(S.plano==='top'?' top':'');
+}
+function go(t){ S.tela=t; if(t==='questoes'&&!S.qAtual) proxQ(); render(); $('#screen').scrollTop=0; }
+function render(){
+  if(S.onb<3){ $('#topbar').style.display='none'; $('#nav').style.display='none'; $('#screen').innerHTML=onboarding(); return; }
+  $('#topbar').style.display='flex'; $('#nav').style.display='flex'; renderNav();
+  const f={inicio:telaInicio,questoes:telaQuestoes,simulado:telaSimulado,chances:telaChances,planos:telaPlanos}[S.tela];
+  $('#screen').innerHTML=f();
+}
+function ring(p, label, cor){
+  const r=56, C=2*Math.PI*r, off=C*(1-p);
+  return `<div class="ring"><svg width="132" height="132"><circle cx="66" cy="66" r="${r}" stroke="#eef0f3" stroke-width="12" fill="none"/><circle cx="66" cy="66" r="${r}" stroke="${cor||'var(--pri)'}" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${off}"/></svg><div class="c">${label}</div></div>`;
+}
+
+/* ===================== ONBOARDING ===================== */
+function onboarding(){
+  if(S.onb===0) return `<div class="ob">
+    <div class="step">1 de 3</div>
+    <div class="h" style="font-size:22px;margin-top:6px">Onde você quer passar?</div>
+    <p class="sub">Escolha o curso. Vamos calcular sua chance de aprovação a cada questão que você resolver.</p>
+    <div class="chips" style="margin:16px 0 20px">${CURSOS.map(c=>`<button class="chip ${S.curso===c.id?'on':''}" onclick="S.curso='${c.id}';S.ops=[];render()">${c.nome}${c.top?'<span class="t">TOP</span>':''}</button>`).join('')}</div>
+    <button class="btn" ${S.curso?'':'disabled'} onclick="S.onb=1;render()">Continuar</button></div>`;
+  const c=cursoObj();
+  if(S.onb===1) return `<div class="ob">
+    <div class="step">2 de 3 · ${c.nome}</div>
+    <div class="h" style="font-size:22px;margin-top:6px">Quais universidades?</div>
+    <p class="sub">Escolha até 5 opções. No plano grátis você acompanha 1; nos pagos, até 5.</p>
+    <div style="margin:14px 0">${c.ops.map((o,i)=>`<button class="opt ${S.ops.includes(i)?'on':''}" onclick="togOp(${i})"><span>${o[0]}<br><small>Nota de corte ${o[1].toFixed(2).replace('.',',')}${o[2]?' · Sisu 2026':' · ilustrativa'}</small></span><span>${S.ops.includes(i)?'✓':''}</span></button>`).join('')}</div>
+    ${c.faixa?`<p class="note">${c.faixa}. As demais notas são ilustrativas.</p>`:'<p class="note">Notas de corte ilustrativas para o protótipo.</p>'}
+    <button class="btn" style="margin-top:12px" ${S.ops.length?'':'disabled'} onclick="S.onb=2;render()">Continuar</button></div>`;
+  return `<div class="ob">
+    <div class="step">3 de 3</div>
+    <div class="h" style="font-size:22px;margin-top:6px">Como você vai concorrer?</div>
+    <p class="sub">A modalidade muda a nota de corte. (A chance por cota é liberada a partir do plano Pro.)</p>
+    <div style="margin:14px 0">${MODALIDADES.map(m=>`<button class="opt ${S.mod===m.id?'on':''}" onclick="S.mod='${m.id}';render()"><span>${m.nome}</span><span>${S.mod===m.id?'✓':''}</span></button>`).join('')}</div>
+    <div class="card" style="margin-top:8px"><div class="k">Seu nível hoje nas provas objetivas</div>
+      <div class="between"><span class="sub">Média do último ENEM ou simulado; se não souber, deixe 550</span><b id="prv">${S.prior}</b></div>
+      <input type="range" min="400" max="800" step="10" value="${S.prior}" oninput="S.prior=+this.value;$('#prv').textContent=this.value"></div>
+    <div class="card"><div class="k">Sua redação hoje (estimativa)</div>
+      <div class="between"><span class="sub">Ajuste depois que corrigir uma redação</span><b id="redv">${S.red}</b></div>
+      <input type="range" min="300" max="960" step="20" value="${S.red}" oninput="S.red=+this.value;$('#redv').textContent=this.value"></div>
+    <button class="btn" onclick="S.onb=3;S.tela='inicio';S.hist=[chance(opsVis()[0][1]).p];render()">Ver minha chance</button></div>`;
+}
+function togOp(i){ const k=S.ops.indexOf(i); if(k>=0) S.ops.splice(k,1); else if(S.ops.length<5) S.ops.push(i); render(); }
+function opsVis(){ const c=cursoObj(); const lim=PLANOS.find(p=>p.id===S.plano).ops; return S.ops.map(i=>[i,c.ops[i]]).slice(0,lim); }
+
+/* ===================== INÍCIO ===================== */
+function telaInicio(){
+  const c=cursoObj(), [i0,op]=opsVis()[0]; const ch=chance(op); const ns=notas();
+  const paga=RANK[S.plano]>=1; const [fx,fc]=faixa(ch.p); const [pr,pc]=precisao();
+  const best=melhorArea(op);
+  const centro = paga ? `<div class="p">${pct(ch.p)}</div><div class="l">chance estimada</div>` : `<div class="p" style="font-size:22px">${fx}</div><div class="l">chance</div>`;
+  const total=Object.values(S.resp).reduce((s,l)=>s+l.length,0);
+  const hist=S.hist.slice(-20);
+  return `
+  <div class="sub">Olá! Seu objetivo</div>
+  <div class="h">${c.nome}</div>
+  <div class="sub" style="margin-bottom:12px">${op[0]} · ${MODALIDADES.find(m=>m.id===S.mod).nome}</div>
+  <div class="card"><div class="row" style="gap:14px">
+    ${ring(ch.p, centro, ch.p<0.25?'var(--bad)':ch.p<0.6?'var(--warn)':'var(--good)')}
+    <div style="flex:1">
+      <div class="k">Sua nota no curso</div>
+      <div style="font-size:22px;font-weight:800">${ch.nota.toFixed(0)} <span class="sub" style="font-weight:500">± ${ch.se.toFixed(0)}</span></div>
+      <div class="sub">Corte: ${ch.corte.toFixed(0)} · ${ch.falta>0?`faltam <b>${ch.falta.toFixed(0)}</b> pts`:`<b style="color:var(--good)">${(-ch.falta).toFixed(0)} pts acima</b>`}</div>
+      <div style="margin-top:6px"><span class="badge ${pc}">Precisão ${pr}</span> ${!paga?`<span class="badge b-pri">% no Essencial</span>`:''}</div>
+    </div></div>
+    ${S.ultimoDelta!==null&&paga?`<p class="sub" style="margin:10px 0 0">Última questão: <span class="delta ${S.ultimoDelta>=0?'up':'down'}">${ppf(S.ultimoDelta)}</span></p>`:''}
+  </div>
+  <div class="tip">${best.g>=0.005?`Próximo passo: <b>${nomeArea(best.k)}</b> é a área que mais move sua chance em ${c.nome} (+20 pontos nela ≈ <b>${ppf(best.g)}</b>).`:`Você está a <b>${Math.max(0,ch.falta).toFixed(0)} pontos</b> do corte. Em ${c.nome}, <b>${nomeArea(best.k)}</b> tem o maior peso: é por onde a nota sobe mais rápido. Veja também opções com corte menor em Chances.`}</div>
+  <button class="btn" onclick="go('questoes')">Resolver questões agora</button>
+  <div style="height:12px"></div>
+  <div class="card"><div class="between"><div class="k">Notas por área (TRI)</div><span class="sub">${total} questões</span></div>
+  ${AREAS.map(a=>{const n=ns[a.id];return `<div class="area"><b>${a.nome}</b><div class="bar"><i style="width:${Math.max(4,Math.min(100,(n.nota-300)/6))}%"></i></div><div class="v">${n.nota.toFixed(0)}<small>± ${n.se.toFixed(0)} · peso ${c.pesos[a.id]}</small></div></div>`}).join('')}
+  <div class="area"><b>Redação</b><div class="bar"><i style="width:${(S.red-300)/6.6}%;background:var(--top)"></i></div><div class="v">${S.red}<small>informada · peso ${c.pesos.RED}</small></div></div>
+  </div>
+  <div class="card"><div class="between"><div class="k">Evolução da chance</div><span class="sub">🔥 ${S.streak} dias seguidos</span></div>
+  ${hist.length>1?`<div class="spark" style="margin-top:10px">${hist.map(p=>`<i style="height:${Math.max(4,p*100)}%"></i>`).join('')}</div>`:'<p class="sub">Responda questões para ver sua curva.</p>'}
+  </div>`;
+}
+
+/* ===================== QUESTÕES ===================== */
+function proxQ(area){
+  let pool=QS.filter(q=>!S.respondidas.has(q.id)&&(!area||q.area===area));
+  if(!pool.length){ S.respondidas.clear(); pool=QS.filter(q=>!area||q.area===area); }
+  // escolhe a questão mais informativa perto da proficiência atual
+  const est={}; AREAS.forEach(a=>est[a.id]=eap(S.resp[a.id]).m);
+  pool.sort((x,y)=>Math.abs(x.b-est[x.area])-Math.abs(y.b-est[y.area]));
+  const top=pool.slice(0,3); S.qAtual=top[Math.floor(Math.random()*top.length)];
+  S.qSel=null; S.qFeito=false;
+}
+function telaQuestoes(){
+  const q=S.qAtual; const lim=S.plano==='free'?20:Infinity;
+  if(S.hoje>=lim) return `<div class="card"><div class="h">Limite diário atingido</div><p class="sub">No plano grátis são 20 questões por dia. No Essencial (R$ 9,90/mês) elas são ilimitadas.</p><button class="btn" onclick="go('planos')">Ver planos</button></div>`;
+  const area=AREAS.find(a=>a.id===q.area);
+  const paga=RANK[S.plano]>=1;
+  return `
+  <div class="between"><span class="badge b-pri">${area.nome}</span><span class="sub">Hoje: ${S.hoje}${lim<Infinity?'/'+lim:''} · dificuldade ${q.b<-0.5?'fácil':q.b<0.7?'média':'difícil'}</span></div>
+  <div class="q-stem">${q.stem}</div>
+  ${q.alts.map((t,i)=>{let cls='';if(S.qFeito){if(i===q.ok)cls='ok';else if(i===S.qSel)cls='no';}else if(i===S.qSel)cls='sel';
+    return `<button class="alt ${cls}" ${S.qFeito?'disabled':''} onclick="S.qSel=${i};render()"><span class="L">${'ABCDE'[i]}</span><span>${t}</span></button>`}).join('')}
+  ${S.qFeito?`<div class="expl"><b>${S.qSel===q.ok?'Acertou!':'Resposta: '+'ABCDE'[q.ok]}</b> ${q.exp}</div>
+     <div class="card" style="padding:12px"><div class="between"><span class="sub">Sua chance em ${opsVis()[0][1][0].split(' — ')[0]}</span>
+     ${paga?`<span><b>${pct(chance(opsVis()[0][1]).p)}</b> <span class="delta ${S.ultimoDelta>=0?'up':'down'}">(${ppf(S.ultimoDelta)})</span></span>`:`<span class="badge ${faixa(chance(opsVis()[0][1]).p)[1]}">${faixa(chance(opsVis()[0][1]).p)[0]}</span>`}</div></div>
+     <button class="btn" onclick="proxQ();render()">Próxima questão</button>`
+   :`<button class="btn" ${S.qSel===null?'disabled':''} onclick="responder()">Confirmar resposta</button>`}
+  <p class="note">Questões de exemplo escritas para o protótipo. No produto: provas oficiais do Inep com parâmetros TRI dos microdados + questões inéditas calibradas.</p>`;
+}
+function registrar(q,u){
+  const antes=chance(opsVis()[0][1]).p;
+  S.resp[q.area].push({a:q.a,b:q.b,c:q.c,u:u?1:0});
+  const depois=chance(opsVis()[0][1]).p;
+  S.ultimoDelta=depois-antes; S.hist.push(depois);
+}
+function responder(){ const q=S.qAtual; S.qFeito=true; S.respondidas.add(q.id); S.hoje++; registrar(q,S.qSel===q.ok); render(); }
+
+/* ===================== SIMULADO ===================== */
+let timerId=null;
+function iniciarSim(){
+  const lim={free:1,ess:2}[S.plano];
+  if(lim!==undefined&&S.simUsados>=lim){ modal(`<div class="h">Simulados do mês esgotados</div><p class="sub">Seu plano inclui ${lim} simulado(s) por mês. No Plus eles são ilimitados.</p><button class="btn" onclick="fecharModal();go('planos')">Ver planos</button>`); return; }
+  const qs=[]; AREAS.forEach(a=>{const l=QS.filter(q=>q.area===a.id).sort(()=>Math.random()-.5).slice(0,2); qs.push(...l);});
+  S.sim={qs,i:0,sel:null,resps:[],antes:chance(opsVis()[0][1]).p,notasAntes:notas(),t:qs.length*180};
+  S.simUsados++; clearInterval(timerId);
+  timerId=setInterval(()=>{ if(!S.sim||S.sim.fim){clearInterval(timerId);return;} S.sim.t--; const el=document.getElementById('tm'); if(el) el.textContent=fmtT(S.sim.t); if(S.sim.t<=0) finalizarSim(); },1000);
+  render();
+}
+const fmtT = s => `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+function telaSimulado(){
+  const sm=S.sim;
+  if(!sm) return `<div class="h">Simulado rápido TRI</div><p class="sub">8 questões (2 por área), 3 min por questão. Ao final você vê sua nota estimada por área e quanto a chance mudou.</p>
+    <div class="card"><div class="between"><span>Simulados usados este mês</span><b>${S.simUsados}${({free:'/1',ess:'/2'})[S.plano]||' · ilimitado'}</b></div></div>
+    <button class="btn" onclick="iniciarSim()">Começar simulado</button>
+    <p class="note">No produto: simulado completo de 180 questões e simulados por área, com a mesma régua TRI do Inep.</p>`;
+  if(sm.fim){
+    const ns=notas(), dep=chance(opsVis()[0][1]).p, paga=RANK[S.plano]>=1, ac=sm.resps.filter(Boolean).length;
+    return `<div class="h">Resultado do simulado</div><p class="sub">${ac} de ${sm.qs.length} acertos</p>
+    <div class="card">${AREAS.map(a=>{const d=ns[a.id].nota-sm.notasAntes[a.id].nota;return `<div class="area"><b>${a.nome}</b><div class="bar"><i style="width:${Math.max(4,Math.min(100,(ns[a.id].nota-300)/6))}%"></i></div><div class="v">${ns[a.id].nota.toFixed(0)}<small class="delta ${d>=0?'up':'down'}">${d>=0?'+':''}${d.toFixed(0)}</small></div></div>`}).join('')}</div>
+    <div class="card"><div class="between"><span>Chance em ${opsVis()[0][1][0].split(' — ')[0]}</span>${paga?`<b>${pct(sm.antes)} → ${pct(dep)}</b>`:`<span class="badge ${faixa(dep)[1]}">${faixa(dep)[0]}</span>`}</div>
+    <p class="note">Acertar questões difíceis pesa mais que acertar fáceis: é assim que a TRI do ENEM funciona, e é o que o motor reproduz.</p></div>
+    <button class="btn" onclick="S.sim=null;go('chances')">Ver todas as chances</button>`;
+  }
+  const q=sm.qs[sm.i], area=AREAS.find(a=>a.id===q.area);
+  return `<div class="between"><b>Questão ${sm.i+1} de ${sm.qs.length}</b><span class="timer" id="tm">${fmtT(sm.t)}</span></div>
+  <div class="progress">${sm.qs.map((_,k)=>`<i class="${k<sm.i?'d':''}"></i>`).join('')}</div>
+  <span class="badge b-pri">${area.nome}</span>
+  <div class="q-stem">${q.stem}</div>
+  ${q.alts.map((t,i)=>`<button class="alt ${sm.sel===i?'sel':''}" onclick="S.sim.sel=${i};render()"><span class="L">${'ABCDE'[i]}</span><span>${t}</span></button>`).join('')}
+  <button class="btn" ${sm.sel===null?'disabled':''} onclick="simProx()">${sm.i<sm.qs.length-1?'Próxima':'Finalizar'}</button>`;
+}
+function simProx(){ const sm=S.sim, q=sm.qs[sm.i]; const u=sm.sel===q.ok; sm.resps.push(u); registrar(q,u); sm.sel=null; sm.i++; if(sm.i>=sm.qs.length) finalizarSim(); else render(); }
+function finalizarSim(){ S.sim.fim=true; clearInterval(timerId); render(); }
+
+/* ===================== CHANCES ===================== */
+function telaChances(){
+  const c=cursoObj(), lim=PLANOS.find(p=>p.id===S.plano).ops, paga=RANK[S.plano]>=1, cota=RANK[S.plano]>=3;
+  const lista=S.ops.map(i=>[i,c.ops[i]]);
+  const outras=c.ops.map((o,i)=>[i,o]).filter(([i])=>!S.ops.includes(i));
+  return `<div class="h">Suas chances</div><p class="sub">${c.nome} · ${cota?MODALIDADES.find(m=>m.id===S.mod).nome:'Ampla concorrência'}${!cota&&S.mod!=='ampla'?' <span class="badge b-top">cota no Pro</span>':''}</p>
+  <div style="height:8px"></div>
+  ${lista.map(([i,op],k)=>{const ch=chance(op);const travada=k>=lim;const [fx,fc]=faixa(ch.p);
+    const corpo=`<div class="between"><div><b>${op[0]}</b><div class="sub">Corte ${ch.corte.toFixed(0)}${op[2]?' (Sisu 2026)':' (ilustr.)'} · sua nota ${ch.nota.toFixed(0)} ± ${ch.se.toFixed(0)}</div></div>${paga?`<b style="font-size:18px">${pct(ch.p)}</b>`:`<span class="badge ${fc}">${fx}</span>`}</div>
+      <div class="bar" style="margin-top:8px"><i style="width:${paga?ch.p*100:(fx==='baixa'?20:fx==='média'?50:85)}%;background:${ch.p<0.25?'var(--bad)':ch.p<0.6?'var(--warn)':'var(--good)'}"></i></div>`;
+    return travada?`<div class="card lock"><div class="blur">${corpo}</div><div class="cta"><button class="btn small" onclick="go('planos')">Liberar ${k+1}ª opção</button></div></div>`:`<div class="card">${corpo}</div>`;}).join('')}
+  ${S.ops.length<5&&outras.length?`<div class="card"><div class="k" style="margin-bottom:8px">Adicionar opção</div><select class="sel-native" onchange="if(this.value!==''){S.ops.push(+this.value);render()}"><option value="">Escolher universidade…</option>${outras.map(([i,o])=>`<option value="${i}">${o[0]}</option>`).join('')}</select></div>`:''}
+  ${cota?`<div class="card"><div class="k" style="margin-bottom:8px">Modalidade</div><div class="chips">${MODALIDADES.map(m=>`<button class="chip ${S.mod===m.id?'on':''}" onclick="S.mod='${m.id}';render()">${m.nome}</button>`).join('')}</div></div>`:''}
+  <div class="card"><div class="k">Demonstração: simular aluno</div>
+    <p class="sub" style="margin:4px 0 8px">Gera respostas de um aluno com nível real escolhido, usando itens sintéticos, para ver a estimativa e a chance convergirem.</p>
+    <div class="between"><span class="sub">Nível real nas 4 áreas</span><b id="nvl">700</b></div>
+    <input type="range" id="nivel" min="400" max="850" step="10" value="700" oninput="$('#nvl').textContent=this.value">
+    <div class="row" style="margin-top:8px"><button class="btn small" onclick="simularAluno(20)">+20 questões</button><button class="btn small ghost" onclick="simularAluno(100)">+100 questões</button><button class="btn small ghost" onclick="zerar()">Zerar</button></div>
+  </div>
+  <p class="note">Notas de corte marcadas “Sisu 2026” são reais (ampla concorrência); as demais e os pesos são ilustrativos. Redutor de cota ilustrativo. Incerteza do corte entre edições: ±${SIGMA_CORTE} pontos.</p>`;
+}
+function randn(){ let u=0,v=0; while(!u)u=Math.random(); while(!v)v=Math.random(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+function simularAluno(n){
+  const nivel=+$('#nivel').value, th=(nivel-500)/100;
+  for(let k=0;k<n;k++){
+    const a=AREAS[k%4].id, est=eap(S.resp[a]).m;
+    const it={a:1.2+Math.random()*0.9, b:est+randn()*0.6, c:0.2};
+    it.u=Math.random()<p3(th,it.a,it.b,it.c)?1:0; S.resp[a].push(it);
+  }
+  S.hist.push(chance(opsVis()[0][1]).p); render();
+}
+function zerar(){ S.resp={LC:[],CH:[],CN:[],MT:[]}; S.respondidas.clear(); S.hist=[chance(opsVis()[0][1]).p]; S.ultimoDelta=null; render(); }
+
+/* ===================== PLANOS ===================== */
+function telaPlanos(){
+  const c=cursoObj(); const rec=c.top?'top':'plus';
+  return `<div class="h">Planos</div><p class="sub">Comece grátis. Suba de degrau conforme a sua ambição de curso.</p>
+  <div class="toggle" style="margin-top:12px"><button class="${S.ciclo==='m'?'on':''}" onclick="S.ciclo='m';render()">Mensal</button><button class="${S.ciclo==='a'?'on':''}" onclick="S.ciclo='a';render()">Anual · até o ENEM</button></div>
+  ${PLANOS.map(p=>{const cur=S.plano===p.id, isRec=rec===p.id;
+    const preco=p.m===0?'R$ 0':S.ciclo==='m'?`${brl(p.m)}<small>/mês</small>`:`${brl(p.a)}<small> à vista · ${brl(p.a/12)}/mês</small>`;
+    return `<div class="plan ${cur?'cur':''} ${isRec&&!cur?'rec':''}">
+      <div class="between"><div><b style="font-size:15px">${p.nome}</b> ${isRec?`<span class="badge ${p.id==='top'?'b-top':'b-pri'}">Recomendado p/ ${c.nome}</span>`:''}<div class="sub">${p.para}</div></div>${cur?'<span class="badge b-good">Atual</span>':''}</div>
+      <div class="price" style="margin-top:6px">${preco}</div>
+      <ul>${p.itens.map(i=>`<li>${i}</li>`).join('')}</ul>
+      ${p.social?`<p class="note" style="margin:-4px 0 10px">${p.social}</p>`:''}
+      ${cur?'':`<button class="btn ${p.id==='top'?'':'ghost'}" style="${p.id==='top'?'background:var(--top)':''}" onclick="assinar('${p.id}')">${RANK[p.id]>RANK[S.plano]?'Escolher '+p.nome:'Mudar para '+p.nome}</button>`}
+    </div>`}).join('')}
+  <p class="note">Pagamento por Pix (inclusive Pix Automático) ou cartão no web; nas lojas, cobrança pelo Google Play/App Store. Protótipo: a troca de plano é simulada, sem cobrança.</p>`;
+}
+function assinar(id){
+  const p=PLANOS.find(x=>x.id===id);
+  if(id==='free'){ S.plano='free'; render(); return; }
+  modal(`<div class="h">Assinar ${p.nome}</div><p class="sub">${S.ciclo==='m'?brl(p.m)+' por mês':brl(p.a)+' à vista até o ENEM'}</p>
+   <div class="chips" style="margin:12px 0"><span class="chip on">Pix</span><span class="chip">Pix Automático</span><span class="chip">Cartão</span></div>
+   <p class="note">Simulação: nenhum pagamento é feito no protótipo.</p>
+   <button class="btn" onclick="S.plano='${id}';fecharModal();go('inicio')">Confirmar (simulado)</button>
+   <button class="btn ghost" style="margin-top:8px" onclick="fecharModal()">Cancelar</button>`);
+}
+function modal(html){ $('#modalRoot').innerHTML=`<div class="modal" onclick="if(event.target===this)fecharModal()"><div class="sheet">${html}</div></div>`; }
+function fecharModal(){ $('#modalRoot').innerHTML=''; }
+
+render();
+</script>
+</body>
+</html>

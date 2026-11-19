@@ -1,0 +1,50 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      stage:
+        description: Ambiente
+        type: choice
+        options: [dev, prod]
+        default: dev
+
+permissions:
+  id-token: write   # OIDC — sem access key salva no GitHub
+  contents: read
+
+concurrency:
+  group: deploy-${{ github.event.inputs.stage || 'dev' }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.stage || 'dev' }}
+    env:
+      STAGE: ${{ github.event.inputs.stage || 'dev' }}
+      AWS_REGION: sa-east-1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.STAGE == 'prod' && vars.AWS_ROLE_PROD || vars.AWS_ROLE_DEV }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - run: pip install -r infra/requirements.txt boto3
+
+      - name: cdk deploy
+        working-directory: infra
+        run: npx --yes aws-cdk@2 deploy "Enp-${STAGE}-Foundation" "Enp-${STAGE}-Data" --require-approval never
+
+      - name: Migrações do banco
+        run: python db/migrate.py --stage "$STAGE" --region "$AWS_REGION"
