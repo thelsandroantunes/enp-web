@@ -6,11 +6,13 @@ import "./web.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
+const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+
 export const metadata: Metadata = {
   title: "ENP — Questões ENEM e chance de aprovação",
   description: "Pratique questões do ENEM e acompanhe sua chance de aprovação no curso e na universidade que você quer.",
-  manifest: "/manifest.webmanifest",
-  icons: { icon: "/icon.svg", apple: "/icon.svg" },
+  manifest: `${base}/manifest.webmanifest`,
+  icons: { icon: `${base}/icon.svg`, apple: `${base}/icon.svg` },
 };
 
 export const viewport: Viewport = { themeColor: "#2f5bea", width: "device-width", initialScale: 1 };

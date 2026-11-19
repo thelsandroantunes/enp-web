@@ -9,7 +9,10 @@ npm install
 npm run dev        # http://localhost:3000
 npm test           # testes do motor TRI
 npm run build
+GITHUB_PAGES=true npm run build   # (Git Bash) site estático em out/, servido em /enp-web
 ```
+
+Publicação: o workflow `.github/workflows/pages.yml` gera o site estático e publica em https://thelsandroantunes.github.io/enp-web/.
 
 ## Dois visuais
 

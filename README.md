@@ -20,6 +20,11 @@ backend/             API FastAPI (Lambda) — Etapa D
 web/                 app Next.js (protótipo navegável) — Etapa E, ver web/README.md
 ```
 
+## Demonstração
+
+Protótipo web publicado pelo GitHub Pages: **https://thelsandroantunes.github.io/enp-web/**
+(abra numa tela larga para o visual web; no celular, o visual de app). Atualiza sozinho a cada push em `web/`.
+
 ## Rodar o web localmente
 
 ```bash
