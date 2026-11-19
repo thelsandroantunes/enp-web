@@ -3,15 +3,16 @@
 import Link from "next/link";
 import { Alternativas } from "@/components/Alternativas";
 import { Badge } from "@/components/Badge";
+import { ApoioSimulado } from "@/components/feedback/ApoioSimulado";
+import { AreaChip } from "@/components/feedback/AreaChip";
 import { NotasPorArea } from "@/components/NotasPorArea";
 import { Sheet } from "@/components/Sheet";
 import { useSimulado } from "@/hooks/useSimulado";
-import { AREAS } from "@/lib/dados";
 import { curto, pct, tempo } from "@/lib/formato";
 import { chance, faixa, notas, opcaoPrincipal, pago } from "@/lib/motor";
 
 export function SimuladoMobile() {
-  const { s, sim, limite, esgotado, setEsgotado, iniciar, marcar, avancar, sair } = useSimulado();
+  const { s, sim, piorArea, limite, esgotado, setEsgotado, iniciar, marcar, avancar, sair } = useSimulado();
 
   if (!sim) {
     return (
@@ -41,8 +42,9 @@ export function SimuladoMobile() {
     return (
       <>
         <div className="h">Resultado do simulado</div>
-        <p className="sub">{sim.acertos.filter(Boolean).length} de {sim.qs.length} acertos{sim.t === 0 ? " (tempo esgotado)" : ""}</p>
+        {sim.t === 0 && <p className="sub">Tempo esgotado</p>}
         <div className="espaco" />
+        <ApoioSimulado acertos={sim.acertos.filter(Boolean).length} total={sim.qs.length} piorArea={piorArea} />
         <div className="card"><NotasPorArea ns={notas(s)} antes={sim.notasAntes} /></div>
         <div className="card">
           <div className="between">
@@ -61,7 +63,7 @@ export function SimuladoMobile() {
     <>
       <div className="between"><b>Questão {sim.i + 1} de {sim.qs.length}</b><span className="timer">{tempo(sim.t)}</span></div>
       <div className="progress">{sim.qs.map((_, k) => <i key={k} className={k < sim.i ? "d" : ""} />)}</div>
-      <Badge tom="pri">{AREAS.find((a) => a.id === q.area)!.nome}</Badge>
+      <AreaChip id={q.area} />
       <div className="q-stem">{q.enunciado}</div>
       <Alternativas alternativas={q.alternativas} selecionada={sim.marcadas[sim.i]} onSelect={marcar} />
       <button className="btn" disabled={sim.marcadas[sim.i] === null} onClick={avancar}>

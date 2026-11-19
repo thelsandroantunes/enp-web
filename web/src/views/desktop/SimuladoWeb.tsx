@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { AreasWeb } from "@/components/desktop/Areas";
+import { ApoioSimulado } from "@/components/feedback/ApoioSimulado";
+import { AreaChip } from "@/components/feedback/AreaChip";
 import { useSimulado } from "@/hooks/useSimulado";
 import { AREAS } from "@/lib/dados";
 import { curto, pct, tempo } from "@/lib/formato";
@@ -11,7 +13,7 @@ const LETRAS = "ABCDE";
 const areaNome = (id: string) => AREAS.find((a) => a.id === id)!.nome;
 
 export function SimuladoWeb() {
-  const { s, sim, limite, esgotado, setEsgotado, iniciar, marcar, irPara, avancar, entregar, sair } = useSimulado();
+  const { s, sim, piorArea, limite, esgotado, setEsgotado, iniciar, marcar, irPara, avancar, entregar, sair } = useSimulado();
 
   if (!sim) {
     return (
@@ -52,6 +54,7 @@ export function SimuladoWeb() {
       <>
         <div className="d-between"><h2 className="d-h2" style={{ margin: 0 }}>Resultado do simulado</h2>
           <button className="d-btn ghost sm" onClick={sair}>Novo simulado</button></div>
+        <div className="d-mt"><ApoioSimulado acertos={ac} total={sim.qs.length} piorArea={piorArea} /></div>
         <div className="d-grid d-g3 d-mt">
           <div className="d-card"><div className="d-mut d-small">Acertos</div><div className="d-kpi">{ac} / {sim.qs.length}</div>
             <div className="d-small d-mut">{sim.t === 0 ? "tempo esgotado" : `sobraram ${tempo(sim.t)}`}</div></div>
@@ -67,7 +70,7 @@ export function SimuladoWeb() {
               <tbody>{sim.qs.map((q, k) => (
                 <tr key={k}><td>{k + 1}</td><td>{areaNome(q.area)}</td>
                   <td>{sim.marcadas[k] === null ? "—" : LETRAS[sim.marcadas[k]!]}</td><td>{LETRAS[q.correta]}</td>
-                  <td>{sim.acertos[k] ? <span className="d-up">✓</span> : <span className="d-down">✗</span>}</td></tr>
+                  <td>{sim.acertos[k] ? <span className="d-up">✓ 🎉</span> : <span className="d-down">✗</span>}</td></tr>
               ))}</tbody></table>
           </div>
         </div>
@@ -95,7 +98,7 @@ export function SimuladoWeb() {
         <button className="d-btn full" onClick={entregar}>Entregar simulado</button>
       </aside>
       <div className="d-card">
-        <div className="d-between"><b>Questão {sim.i + 1} de {sim.qs.length}</b><span className="d-pill hl">{areaNome(q.area)}</span></div>
+        <div className="d-between"><b>Questão {sim.i + 1} de {sim.qs.length}</b><AreaChip id={q.area} /></div>
         <p className="d-stem">{q.enunciado}</p>
         {q.alternativas.map((t, i) => (
           <button key={i} className={`d-opt ${sim.marcadas[sim.i] === i ? "sel" : ""}`} onClick={() => marcar(i)}>

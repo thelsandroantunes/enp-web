@@ -20,7 +20,8 @@ Android e iOS vêm depois, reaproveitando a API (Etapa D) e o motor de chance (E
 - [x] Etapa A em código: OIDC, orçamento, domínio — falta preencher `cdk.json` e subir na AWS
 - [x] Etapa B em código: Aurora + Data API, S3, migrações (schema com 20 tabelas validado em Postgres 16)
 - [x] Protótipo web em Next.js (`web/`), com motor TRI testado
-- [x] Visual web próprio no padrão do SEN (escuro/claro, landing, painel, cartão-resposta, planos em colunas); celular mantém o visual de app
+- [x] Visual web próprio (estrutura de site: landing, painel, cartão-resposta, planos em colunas, tema claro/escuro); celular mantém o visual de app
+- [x] Repaginada jovem (web e celular): roxo→rosa, fonte Nunito, cores por área, XP e níveis, sequência de acertos, confete no acerto, acolhimento no erro, apoio após simulado e resumo motivador a cada bateria de 10 questões
 
 ## Repositórios
 

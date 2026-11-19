@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { XP_ACERTO, XP_ERRO } from "@/lib/feedback";
 import { chance, opcaoPrincipal } from "@/lib/motor";
 import type { Questao } from "@/lib/tipos";
 import { ESTADO_INICIAL, type Estado } from "./estado";
@@ -53,7 +54,13 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
         resp: { ...prev.resp, [q.area]: [...prev.resp[q.area], { a: q.a, b: q.b, c: q.c, u: acertou ? 1 : 0 }] },
       };
       const depois = chance(next, op).p;
-      return { ...next, ultimoDelta: depois - antes, hist: [...prev.hist, depois] };
+      return {
+        ...next,
+        ultimoDelta: depois - antes,
+        hist: [...prev.hist, depois],
+        xp: prev.xp + (acertou ? XP_ACERTO : XP_ERRO),
+        combo: acertou ? prev.combo + 1 : 0,
+      };
     });
   }, []);
 

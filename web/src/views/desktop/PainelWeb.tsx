@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AreasWeb } from "@/components/desktop/Areas";
+import { BarraXP } from "@/components/feedback/BarraXP";
 import { GraficoChance } from "@/components/desktop/Grafico";
 import { modalidade, nomeArea, plano } from "@/lib/dados";
 import { curto, pct, pp } from "@/lib/formato";
@@ -31,6 +32,8 @@ export function PainelWeb() {
         <div className="d-small d-mut">🔥 <b>{s.streak}</b> dias seguidos · hoje <b>{s.hoje}</b> questões</div>
       </div>
 
+      <div className="d-card d-mt" style={{ padding: 16 }}><BarraXP xp={s.xp} /></div>
+
       <div className="d-grid d-g4 d-mt">
         <div className="d-card">
           <div className="d-mut d-small">Chance em {curto(op.universidade)}</div>
@@ -59,7 +62,7 @@ export function PainelWeb() {
         {best.g >= 0.005
           ? <>🎯 <b>Próximo passo:</b> {nomeArea(best.k)} é a área que mais move sua chance em {c.nome}: +20 pontos nela ≈ <b>{pp(best.g)}</b>.</>
           : <>🎯 Você está a <b>{Math.max(0, ch.falta).toFixed(0)} pontos</b> do corte. Em {c.nome}, <b>{nomeArea(best.k)}</b> tem o maior peso: é por onde a nota sobe mais rápido.</>}
-        {" "}<Link href="/questoes" className="d-hl" style={{ fontWeight: 700 }}>Resolver questões →</Link>
+        {" "}<Link href="/questoes" style={{ fontWeight: 900, textDecoration: "underline" }}>Bora treinar →</Link>
       </div>
 
       <div className="d-grid d-g2 d-mt" style={{ gridTemplateColumns: "1.4fr 1fr" }}>

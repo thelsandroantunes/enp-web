@@ -57,5 +57,15 @@ export function useSimulado() {
   const entregar = () => sim && setSim(finalizar(sim));
   const sair = () => setSim(null);
 
-  return { s, sim, limite, esgotado, setEsgotado, iniciar, marcar, irPara, avancar, entregar, sair };
+  /** área com menor aproveitamento no simulado (para a mensagem de apoio) */
+  const piorArea = (() => {
+    if (!sim?.fim) return "";
+    const tx = AREAS.map((a) => {
+      const ks = sim.qs.map((q, k) => [q, k] as const).filter(([q]) => q.area === a.id);
+      return { nome: a.nome, t: ks.filter(([, k]) => sim.acertos[k]).length / Math.max(1, ks.length) };
+    });
+    return tx.reduce((x, y) => (y.t < x.t ? y : x)).nome;
+  })();
+
+  return { s, sim, piorArea, limite, esgotado, setEsgotado, iniciar, marcar, irPara, avancar, entregar, sair };
 }

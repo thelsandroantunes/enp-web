@@ -1,4 +1,4 @@
-import { AREAS } from "@/lib/dados";
+import { area, AREAS } from "@/lib/dados";
 import type { Notas } from "@/lib/motor";
 import type { Curso } from "@/lib/tipos";
 
@@ -13,8 +13,8 @@ export function AreasWeb({ ns, curso, antes }: { ns: Notas; curso?: Curso; antes
         const d = antes ? n.nota - antes[a.id].nota : null;
         return (
           <div className="d-area" key={a.id}>
-            <span>{a.nome}</span>
-            <div className="d-barw"><b style={{ width: `${w(n.nota)}%`, background: a.id === "RED" ? "var(--d-hl)" : undefined }} /></div>
+            <span>{a.id === "RED" ? "✍️" : area(a.id).emoji} {a.nome}</span>
+            <div className="d-barw"><b style={{ width: `${w(n.nota)}%`, background: a.id === "RED" ? "var(--d-grad)" : area(a.id).cor }} /></div>
             <div className="v">
               <b>{n.nota.toFixed(0)}</b>
               {d !== null

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Badge } from "@/components/Badge";
+import { BarraXP } from "@/components/feedback/BarraXP";
 import { Delta } from "@/components/Delta";
 import { NotasPorArea } from "@/components/NotasPorArea";
 import { Ring } from "@/components/Ring";
@@ -28,6 +29,7 @@ export function InicioMobile() {
       <div className="h">{c.nome}</div>
       <div className="sub" style={{ marginBottom: 12 }}>{op.universidade} · {modalidade(s.mod).nome}</div>
 
+      <div className="card" style={{ padding: 12 }}><BarraXP xp={s.xp} /></div>
       <div className="card">
         <div className="row" style={{ gap: 14, flexWrap: "nowrap" }}>
           <Ring p={ch.p} cor={corChance(ch.p)}>
@@ -62,7 +64,7 @@ export function InicioMobile() {
         )}
       </div>
 
-      <Link href="/questoes" className="btn">Resolver questões agora</Link>
+      <Link href="/questoes" className="btn">Bora treinar! 10 questões 💪</Link>
       <div className="espaco" />
 
       <div className="grid2">

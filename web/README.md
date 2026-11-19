@@ -20,14 +20,24 @@ O mesmo app tem **dois visuais**, escolhidos pela largura da tela (`hooks/useDes
 
 | | Celular (< 1024px) | Web (≥ 1024px) |
 |---|---|---|
-| Modelo | app com barra de navegação inferior | padrão do SEN: site com cabeçalho e abas |
-| Tema | claro | escuro (padrão) e claro, com botão no cabeçalho |
+| Modelo | app com barra de navegação inferior | site com cabeçalho e abas, mesmo visual jovem do celular |
+| Tema | claro, roxo→rosa | claro (padrão) e escuro, com botão no cabeçalho |
 | Início `/` | vai direto para o app | página de apresentação (landing) |
 | Telas | uma coluna, cartões empilhados | grade larga: painel com indicadores, tabelas, painel lateral fixo |
 | Simulado | uma questão por vez | cartão-resposta lateral, navegação livre, entrega no final |
 | Extras | — | seletor “Simular plano” no cabeçalho, página Etapas, Planos público |
 
 A lógica é uma só (`hooks/` e `lib/`); só as telas (`views/mobile` e `views/desktop`) mudam.
+
+## Motivação (feedback emocional)
+
+Regras e mensagens em `lib/feedback.ts`; componentes em `components/feedback/`; estilos em `app/feedback.css` (prefixo `fb-`).
+
+- **Acerto:** cartão verde, confete, mensagem de comemoração, +10 XP e sequência de acertos (🔥 a partir de 3).
+- **Erro:** cartão coral com leve tremida e mensagem de acolhimento, +2 XP por tentar, explicação sempre visível.
+- **Bateria de 10 questões:** resumo com acertos, XP, maior sequência e variação da chance + mensagem para continuar (ou voltar amanhã, se o limite grátis acabou).
+- **Simulado:** mensagem de apoio pelo aproveitamento (🏆 / 😄 / 💪 / 🫂), sugerindo a área mais fraca.
+- **Nível:** a cada 100 XP. Animações respeitam “reduzir movimento” do sistema.
 
 ## Estrutura
 

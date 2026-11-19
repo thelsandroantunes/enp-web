@@ -12,8 +12,8 @@ export function NotasPorArea({ ns, curso, red, antes }: { ns: Notas; curso?: Cur
         const d = antes ? n.nota - antes[a.id].nota : null;
         return (
           <div className="area" key={a.id}>
-            <b>{a.nome}</b>
-            <div className="bar"><i style={{ width: `${largura(n.nota)}%` }} /></div>
+            <b>{a.emoji} {a.nome}</b>
+            <div className="bar"><i style={{ width: `${largura(n.nota)}%`, background: a.cor }} /></div>
             <div className="v">
               {n.nota.toFixed(0)}
               {d !== null ? (
@@ -27,7 +27,7 @@ export function NotasPorArea({ ns, curso, red, antes }: { ns: Notas; curso?: Cur
       })}
       {red !== undefined && curso && (
         <div className="area">
-          <b>Redação</b>
+          <b>✍️ Redação</b>
           <div className="bar"><i style={{ width: `${(red - 300) / 6.6}%`, background: "var(--top)" }} /></div>
           <div className="v">{red}<small>informada · peso {curso.pesos.RED}</small></div>
         </div>

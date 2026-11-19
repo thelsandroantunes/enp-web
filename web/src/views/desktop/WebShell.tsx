@@ -25,7 +25,7 @@ export const useToast = () => useContext(ToastCtx);
 export function WebShell({ children }: { children: ReactNode }) {
   const path = usePathname();
   const { s, set } = useApp();
-  const [tema, setTema] = useState<Tema>("dark");
+  const [tema, setTema] = useState<Tema>("light");
   const [toast, setToast] = useState<string | null>(null);
   const h = useRef<ReturnType<typeof setTimeout> | null>(null);
 

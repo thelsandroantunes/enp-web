@@ -1,12 +1,14 @@
 /* Dados ILUSTRATIVOS do protótipo. No produto vêm da API (Etapas C e D). */
 import type { Area, Curso, Modalidade, Plano, PlanoId, Questao } from "./tipos";
 
-export const AREAS: { id: Area; nome: string }[] = [
-  { id: "LC", nome: "Linguagens" },
-  { id: "CH", nome: "Humanas" },
-  { id: "CN", nome: "Natureza" },
-  { id: "MT", nome: "Matemática" },
+/** Cada área tem cor e emoji próprios (chips, barras e cartão-resposta) */
+export const AREAS: { id: Area; nome: string; cor: string; emoji: string }[] = [
+  { id: "LC", nome: "Linguagens", cor: "#ec4899", emoji: "📚" },
+  { id: "CH", nome: "Humanas", cor: "#f97316", emoji: "🌎" },
+  { id: "CN", nome: "Natureza", cor: "#10b981", emoji: "🧪" },
+  { id: "MT", nome: "Matemática", cor: "#3b82f6", emoji: "📐" },
 ];
+export const area = (id: string) => AREAS.find((a) => a.id === id)!;
 
 const op = (universidade: string, corte: number, real = false) => ({ universidade, corte, real });
 

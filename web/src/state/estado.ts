@@ -17,6 +17,10 @@ export interface Estado {
   ultimoDelta: number | null;
   simUsados: number;
   streak: number;
+  /** pontos de experiência (gamificação) */
+  xp: number;
+  /** acertos seguidos na prática */
+  combo: number;
   hoje: number;
 }
 
@@ -36,5 +40,7 @@ export const ESTADO_INICIAL: Estado = {
   ultimoDelta: null,
   simUsados: 0,
   streak: 3,
+  xp: 0,
+  combo: 0,
   hoje: 0,
 };
